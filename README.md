@@ -31,10 +31,18 @@ CapacityTable
 ```kql
 CapacityTable
 | evaluate bag_unpack(data, columnsConflict='keep_source')
+| extend ts = todatetime(windowStartTime)
+| where isnotnull(ts)
+| where ts between (ago(24h) .. now())
 | extend CU_per_s = todouble(capacityUnitMs) / 1000.0 / 30.0
-| extend windowStartTime_gmt1 = datetime_utc_to_local(todatetime(windowStartTime), 'Europe/Berlin')
-| project windowStartTime_gmt1, CU_per_s
-| render timechart
+| project ts, CU_per_s
+| order by ts asc
+| render timechart with (
+    xcolumn=ts,
+    ycolumns=CU_per_s,
+    title="JlaCapacity CU/s (last 24 hours)"
+)
+
 ```
 ### Troubleshooting: Graph not showing
 

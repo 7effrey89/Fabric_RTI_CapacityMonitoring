@@ -26,8 +26,8 @@ CapacityTable
 <br>
 
 ### Sample1B: 📈 Utilization of the Capacity (%) for last 24 hour
-```
-<br>
+
+```kql
 CapacityTable
 | evaluate bag_unpack(data, columnsConflict='keep_source')
 | extend capacityUnitMsBudget = baseCapacityUnits * 1000 * 30

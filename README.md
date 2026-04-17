@@ -25,7 +25,7 @@ CapacityTable
 ```
 <br>
 
-### Sample2: ⚡ CU Consumption (CU/s every 30 seconds)
+### Sample2: ⚡ CU Consumption (CU/s every 30 seconds) with the last 24 hour
 <img width="901" height="251" alt="image" src="https://github.com/user-attachments/assets/c0857e34-033c-4ff1-9a93-12c14e3d580e" />
 
 ```kql

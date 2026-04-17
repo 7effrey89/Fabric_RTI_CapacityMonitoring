@@ -10,7 +10,7 @@
 
 ## KQL queries for visualizing the capacity events
 
-### Sample1: 📈 Utilization of the Capacity (%)
+### Sample1A: 📈 Utilization of the Capacity (%)
 <img width="893" height="250" alt="image" src="https://github.com/user-attachments/assets/465c4af5-2a53-4896-8ac2-4126bcab4ec3" />
 
 ```kql
@@ -22,6 +22,28 @@ CapacityTable
 | project windowStartTime_gmt1, UtilizationPct
 | where UtilizationPct < 500
 | render timechart
+```
+<br>
+
+### Sample1B: 📈 Utilization of the Capacity (%) for last 24 hour
+```
+<br>
+CapacityTable
+| evaluate bag_unpack(data, columnsConflict='keep_source')
+| extend capacityUnitMsBudget = baseCapacityUnits * 1000 * 30
+| extend UtilizationPct = todouble(capacityUnitMs) / capacityUnitMsBudget * 100
+| extend ts = todatetime(windowStartTime)   // DON'T timezone-shift yet
+| where isnotnull(ts)
+| where ts between (ago(24h) .. now() + 5m) // allow small future skew
+| where UtilizationPct < 500
+| extend ts_local = datetime_utc_to_local(ts, 'Europe/Berlin')
+| project ts_local, UtilizationPct
+| order by ts_local asc
+| render timechart with (
+    xcolumn=ts_local,
+    ycolumns=UtilizationPct,
+    title="Capacity Utilization % (last 24 hours)"
+)
 ```
 <br>
 
